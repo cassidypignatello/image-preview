@@ -11,6 +11,8 @@ class ImagePreview extends Component {
       imageUrl: '',
       width: '',
       height: '',
+      x: '',
+      y: '',
       maxWidth: 800,
       maxHeight: 100,
       cropped: false
@@ -20,6 +22,7 @@ class ImagePreview extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCropSubmit = this.handleCropSubmit.bind(this);
     this.handleCropSave = this.handleCropSave.bind(this);
+    this.handleReset = this.handleReset.bind(this);
   }
 
   handleCropChange(e) {
@@ -68,7 +71,16 @@ class ImagePreview extends Component {
     bufferCanvas.height = newImage.height;
     bufferContext.drawImage(newImage, 0, 0);
 
-    canvasContext.drawImage(bufferCanvas, 0, 0, this.state.width, this.state.height, 0, 0, this.state.width, this.state.height);
+    canvasContext.drawImage(
+      bufferCanvas,
+      this.state.x,
+      this.state.y,
+      this.state.width, 
+      this.state.height,
+      0,
+      0,
+      this.state.width,
+      this.state.height);
     this.setState({
       imageUrl: canvas.toDataURL('image/png'),
       cropped: true
@@ -76,11 +88,22 @@ class ImagePreview extends Component {
   }
 
   handleCropSave() {
-    saveImage(this.state.imageUrl).then(function(data) {
-      this.setState({
-        imageUrl: data
-      });
-    }.bind(this));
+    if (!this.state.file) {
+      alert('No image selected!');
+    } else {
+      saveImage(this.state.imageUrl).then(function(data) {
+        this.setState({
+          imageUrl: data
+        });
+      }.bind(this));
+    }
+  }
+
+  handleReset() {
+    this.setState({
+      file: '',
+      imageUrl: ''
+    })
   }
 
   render() {
@@ -117,6 +140,26 @@ class ImagePreview extends Component {
             value={this.state.height}
             onChange={this.handleCropChange}
           />
+          <label htmlFor='x'>
+            Start from X-Axis
+          </label>
+          <input
+            className='xSelect'
+            name='x'
+            type='number'
+            value={this.state.x}
+            onChange={this.handleCropChange}
+          />
+          <label htmlFor='y'>
+            Start from Y-Axis
+          </label>
+          <input
+            className='ySelect'
+            name='y'
+            type='number'
+            value={this.state.y}
+            onChange={this.handleCropChange}
+          />
           <button
             className='button'
             type='submit'
@@ -130,8 +173,14 @@ class ImagePreview extends Component {
           <button
             className='button'
             type='submit'
-            onClick={this.handleCropSave}
-            disabled={!this.state.cropped}>
+            onClick={this.handleReset}
+            disabled={!this.state.file}>
+            Clear Image
+          </button>
+          <button
+            className='button'
+            type='submit'
+            onClick={this.handleCropSave}>
             Save Image
           </button>
         </form>
