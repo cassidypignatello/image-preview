@@ -4,38 +4,27 @@ import './index.css';
 import { saveImage } from './utils/api';
 
 class ImagePreview extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      file: '',
-      imageUrl: '',
-      width: '',
-      height: '',
-      x: '',
-      y: '',
-      maxWidth: 800,
-      maxHeight: 100,
-      cropped: false,
-      saved: false
-    };
-    this.handleImageChange = this.handleImageChange.bind(this);
-    this.handleCropChange = this.handleCropChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleCropSubmit = this.handleCropSubmit.bind(this);
-    this.handleCropSave = this.handleCropSave.bind(this);
-    this.handleReset = this.handleReset.bind(this);
-    this.handlePrint = this.handlePrint.bind(this);
+  state = {
+    file: '',
+    imageUrl: '',
+    width: '',
+    height: '',
+    x: '',
+    y: '',
+    maxWidth: 800,
+    maxHeight: 100,
+    cropped: false,
+    saved: false
   }
 
-  handleCropChange(e) {
+  handleCropChange = (e) => {
     this.setState({
       [e.target.name]: e.target.value
     });
   }
 
-  handleImageChange(e) {
+  handleImageChange = (e) => {
     e.preventDefault();
-
     const reader = new FileReader();
     const file = e.target.files[0];
     const filesize = ((file.size / 1024) / 1024).toFixed(4);
@@ -54,20 +43,18 @@ class ImagePreview extends Component {
     reader.readAsDataURL(file);
   }
 
-  handleSubmit(e) {
+  handleSubmit = (e) => {
     e.preventDefault();
   }
 
-  handleCropSubmit() {
+  handleCropSubmit = () => {
     const newImage = new Image();
     const { imageUrl, width, height, x, y } = this.state;
     newImage.src = imageUrl;
-
     const canvas = document.createElement('canvas');
     const canvasContext = canvas.getContext('2d');
     canvas.width = width;
     canvas.height = height;
-
     const bufferCanvas = document.createElement('canvas');
     const bufferContext = bufferCanvas.getContext('2d');
     bufferCanvas.width = newImage.width;
@@ -90,7 +77,7 @@ class ImagePreview extends Component {
     });
   }
 
-  handleCropSave() {
+  handleCropSave = () => {
     const { file, imageUrl } = this.state;
     if (!file) {
       alert('No image selected!');
@@ -100,18 +87,18 @@ class ImagePreview extends Component {
           imageUrl: data,
           saved: true
         });
-      }.bind(this));
+      });
     }
   }
 
-  handleReset() {
+  handleReset = () => {
     this.setState({
       file: '',
       imageUrl: ''
     })
   }
 
-  handlePrint() {
+  handlePrint = () => {
     const win = window.open();
     const { imageUrl } = this.state;
     win.document.write(`<div style='display: flex; justify-content: center'>
