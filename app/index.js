@@ -30,12 +30,17 @@ class ImagePreview extends Component {
 
     const reader = new FileReader();
     const file = e.target.files[0];
+    const filesize = ((file.size / 1024) / 1024).toFixed(4);
 
     reader.onloadend = () => {
-      this.setState({
-        file: file,
-        imageUrl: reader.result
-      });
+      if (filesize <= 1) {
+        this.setState({
+          file: file,
+          imageUrl: reader.result
+        });
+      } else {
+        alert('You must choose an image that\'s 1MB or less!');
+      }
     }
 
     reader.readAsDataURL(file);
@@ -68,12 +73,6 @@ class ImagePreview extends Component {
   }
 
   render() {
-    let imagePreview = null;
-    if (this.state.imageUrl) {
-      imagePreview = (<img src={this.state.imageUrl}/>);
-    } else {
-      imagePreview = (<div>Please select an image</div>);
-    }
     return(
       <div className='container'>
         <form onSubmit={this.handleSubmit}>
@@ -119,7 +118,9 @@ class ImagePreview extends Component {
           </button>
         </form>
         <div className='preview'>
-          {imagePreview}
+          {this.state.imageUrl &&
+          <img src={this.state.imageUrl}/> ||
+          <div>Please select an image</div>}
         </div>
       </div>
     );
