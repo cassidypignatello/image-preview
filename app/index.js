@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import { saveImage } from './utils/api';
 
 class ImagePreview extends Component {
   constructor(props) {
@@ -11,12 +12,14 @@ class ImagePreview extends Component {
       width: '',
       height: '',
       maxWidth: 800,
-      maxHeight: 100
+      maxHeight: 100,
+      cropped: false
     };
     this.handleImageChange = this.handleImageChange.bind(this);
     this.handleCropChange = this.handleCropChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCropSubmit = this.handleCropSubmit.bind(this);
+    this.handleCropSave = this.handleCropSave.bind(this);
   }
 
   handleCropChange(e) {
@@ -48,7 +51,6 @@ class ImagePreview extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    // call function for API
   }
 
   handleCropSubmit() {
@@ -68,8 +70,17 @@ class ImagePreview extends Component {
 
     canvasContext.drawImage(bufferCanvas, 0, 0, this.state.width, this.state.height, 0, 0, this.state.width, this.state.height);
     this.setState({
-      imageUrl: canvas.toDataURL('image/png')
+      imageUrl: canvas.toDataURL('image/png'),
+      cropped: true
     });
+  }
+
+  handleCropSave() {
+    saveImage(this.state.imageUrl).then(function(data) {
+      this.setState({
+        imageUrl: data
+      });
+    }.bind(this));
   }
 
   render() {
@@ -115,6 +126,13 @@ class ImagePreview extends Component {
                       this.state.width > this.state.maxWidth ||
                       this.state.height > this.state.maxHeight}>
             Crop Image
+          </button>
+          <button
+            className='button'
+            type='submit'
+            onClick={this.handleCropSave}
+            disabled={!this.state.cropped}>
+            Save Image
           </button>
         </form>
         <div className='preview'>
