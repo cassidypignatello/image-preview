@@ -9,7 +9,9 @@ class ImagePreview extends Component {
       file: '',
       imageUrl: '',
       width: '',
-      height: ''
+      height: '',
+      maxWidth: 800,
+      maxHeight: 100
     };
     this.handleImageChange = this.handleImageChange.bind(this);
     this.handleCropChange = this.handleCropChange.bind(this);
@@ -45,7 +47,24 @@ class ImagePreview extends Component {
   }
 
   handleCropSubmit() {
+    const newImage = new Image();
+    newImage.src = this.state.imageUrl;
 
+    const canvas = document.createElement('canvas');
+    const canvasContext = canvas.getContext('2d');
+    canvas.width = this.state.width;
+    canvas.height = this.state.height;
+
+    const bufferCanvas = document.createElement('canvas');
+    const bufferContext = bufferCanvas.getContext('2d');
+    bufferCanvas.width = newImage.width;
+    bufferCanvas.height = newImage.height;
+    bufferContext.drawImage(newImage, 0, 0);
+
+    canvasContext.drawImage(bufferCanvas, 0, 0, this.state.width, this.state.height, 0, 0, this.state.width, this.state.height);
+    this.setState({
+      imageUrl: canvas.toDataURL('image/png')
+    });
   }
 
   render() {
@@ -74,7 +93,7 @@ class ImagePreview extends Component {
           <input
             className='widthSelect'
             name='width'
-            type='text'
+            type='number'
             value={this.state.width}
             onChange={this.handleCropChange}
           />
@@ -84,14 +103,18 @@ class ImagePreview extends Component {
           <input
             className='heightSelect'
             name='height'
-            type='text'
+            type='number'
             value={this.state.height}
             onChange={this.handleCropChange}
           />
           <button
             className='button'
             type='submit'
-            onClick={this.handleCropSubmit}>
+            onClick={this.handleCropSubmit}
+            disabled={!this.state.width ||
+                      !this.state.height ||
+                      this.state.width > this.state.maxWidth ||
+                      this.state.height > this.state.maxHeight}>
             Crop Image
           </button>
         </form>
