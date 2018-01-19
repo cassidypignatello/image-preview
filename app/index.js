@@ -43,7 +43,7 @@ class ImagePreview extends Component {
     reader.onloadend = () => {
       if (filesize <= 1) {
         this.setState({
-          file: file,
+          file,
           imageUrl: reader.result
         });
       } else {
@@ -95,7 +95,7 @@ class ImagePreview extends Component {
     if (!file) {
       alert('No image selected!');
     } else {
-      saveImage(imageUrl).then(function(data) {
+      saveImage(imageUrl).then((data) => {
         this.setState({
           imageUrl: data,
           saved: true
