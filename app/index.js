@@ -60,12 +60,13 @@ class ImagePreview extends Component {
 
   handleCropSubmit() {
     const newImage = new Image();
-    newImage.src = this.state.imageUrl;
+    const { imageUrl, width, height, x, y } = this.state;
+    newImage.src = imageUrl;
 
     const canvas = document.createElement('canvas');
     const canvasContext = canvas.getContext('2d');
-    canvas.width = this.state.width;
-    canvas.height = this.state.height;
+    canvas.width = width;
+    canvas.height = height;
 
     const bufferCanvas = document.createElement('canvas');
     const bufferContext = bufferCanvas.getContext('2d');
@@ -75,14 +76,14 @@ class ImagePreview extends Component {
 
     canvasContext.drawImage(
       bufferCanvas,
-      this.state.x,
-      this.state.y,
-      this.state.width,
-      this.state.height,
+      x,
+      y,
+      width,
+      height,
       0,
       0,
-      this.state.width,
-      this.state.height);
+      width,
+      height);
     this.setState({
       imageUrl: canvas.toDataURL('image/png'),
       cropped: true
@@ -90,10 +91,11 @@ class ImagePreview extends Component {
   }
 
   handleCropSave() {
-    if (!this.state.file) {
+    const { file, imageUrl } = this.state;
+    if (!file) {
       alert('No image selected!');
     } else {
-      saveImage(this.state.imageUrl).then(function(data) {
+      saveImage(imageUrl).then(function(data) {
         this.setState({
           imageUrl: data,
           saved: true
@@ -111,8 +113,9 @@ class ImagePreview extends Component {
 
   handlePrint() {
     const win = window.open();
+    const { imageUrl } = this.state;
     win.document.write(`<div style='display: flex; justify-content: center'>
-                          <img src=${this.state.imageUrl}/>
+                          <img src=${imageUrl}/>
                         <div>`);
     win.focus();
     win.print();
@@ -120,6 +123,7 @@ class ImagePreview extends Component {
   }
 
   render() {
+    const { width, height, x, y, maxWidth, maxHeight, file, saved, imageUrl } = this.state;
     return(
       <div className='container'>
         <form onSubmit={this.handleSubmit}>
@@ -140,7 +144,7 @@ class ImagePreview extends Component {
             className='widthSelect'
             name='width'
             type='number'
-            value={this.state.width}
+            value={width}
             onChange={this.handleCropChange}
           />
           <label htmlFor='height'>
@@ -150,7 +154,7 @@ class ImagePreview extends Component {
             className='heightSelect'
             name='height'
             type='number'
-            value={this.state.height}
+            value={height}
             onChange={this.handleCropChange}
           />
           <label htmlFor='x'>
@@ -160,7 +164,7 @@ class ImagePreview extends Component {
             className='xSelect'
             name='x'
             type='number'
-            value={this.state.x}
+            value={x}
             onChange={this.handleCropChange}
           />
           <label htmlFor='y'>
@@ -170,24 +174,24 @@ class ImagePreview extends Component {
             className='ySelect'
             name='y'
             type='number'
-            value={this.state.y}
+            value={y}
             onChange={this.handleCropChange}
           />
           <button
             className='button'
             type='submit'
             onClick={this.handleCropSubmit}
-            disabled={!this.state.width ||
-                      !this.state.height ||
-                      this.state.width > this.state.maxWidth ||
-                      this.state.height > this.state.maxHeight}>
+            disabled={!width ||
+                      !height ||
+                      width > maxWidth ||
+                      height > maxHeight}>
             Crop Image
           </button>
           <button
             className='button'
             type='submit'
             onClick={this.handleReset}
-            disabled={!this.state.file}>
+            disabled={!file}>
             Clear Image
           </button>
           <button
@@ -200,13 +204,13 @@ class ImagePreview extends Component {
             className='button'
             type='submit'
             onClick={this.handlePrint}
-            disabled={!this.state.saved}>
+            disabled={!saved}>
             Print Preview
           </button>
         </form>
         <div className='preview'>
-          {this.state.imageUrl &&
-          <img src={this.state.imageUrl}/> ||
+          {imageUrl &&
+          <img src={imageUrl}/> ||
           <div>Please select an image</div>}
         </div>
       </div>
