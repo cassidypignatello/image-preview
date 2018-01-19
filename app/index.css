@@ -1,3 +1,29 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
 body {
-  background: green;
+  font-family: -apple-system,
+  BlinkMacSystemFont,SegoeUI,
+  Roboto,Oxygen-Sans,Ubuntu,
+  Cantarell,Helvetica Neue,
+  sans-serif;
+  background-color: #4392f1;
+  color: #262626;
+}
+
+h1 {
+  text-align: center;
+}
+
+form, #app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+form > * {
+  margin: 10px;
 }
