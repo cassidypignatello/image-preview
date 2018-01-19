@@ -15,7 +15,8 @@ class ImagePreview extends Component {
       y: '',
       maxWidth: 800,
       maxHeight: 100,
-      cropped: false
+      cropped: false,
+      saved: false
     };
     this.handleImageChange = this.handleImageChange.bind(this);
     this.handleCropChange = this.handleCropChange.bind(this);
@@ -23,6 +24,7 @@ class ImagePreview extends Component {
     this.handleCropSubmit = this.handleCropSubmit.bind(this);
     this.handleCropSave = this.handleCropSave.bind(this);
     this.handleReset = this.handleReset.bind(this);
+    this.handlePrint = this.handlePrint.bind(this);
   }
 
   handleCropChange(e) {
@@ -75,7 +77,7 @@ class ImagePreview extends Component {
       bufferCanvas,
       this.state.x,
       this.state.y,
-      this.state.width, 
+      this.state.width,
       this.state.height,
       0,
       0,
@@ -93,7 +95,8 @@ class ImagePreview extends Component {
     } else {
       saveImage(this.state.imageUrl).then(function(data) {
         this.setState({
-          imageUrl: data
+          imageUrl: data,
+          saved: true
         });
       }.bind(this));
     }
@@ -104,6 +107,16 @@ class ImagePreview extends Component {
       file: '',
       imageUrl: ''
     })
+  }
+
+  handlePrint() {
+    const win = window.open();
+    win.document.write(`<div style='display: flex; justify-content: center'>
+                          <img src=${this.state.imageUrl}/>
+                        <div>`);
+    win.focus();
+    win.print();
+    win.close();
   }
 
   render() {
@@ -182,6 +195,13 @@ class ImagePreview extends Component {
             type='submit'
             onClick={this.handleCropSave}>
             Save Image
+          </button>
+          <button
+            className='button'
+            type='submit'
+            onClick={this.handlePrint}
+            disabled={!this.state.saved}>
+            Print Preview
           </button>
         </form>
         <div className='preview'>
